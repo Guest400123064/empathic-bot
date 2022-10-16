@@ -14,7 +14,10 @@ conda activate parlai
 conda install -c conda-forge cudatoolkit-dev
 
 # For vscode notebook env
-pip install -U ipykernel ipywidgets
+pip install ipykernel ipywidgets
+
+# Install openai (for gpt3 prompting)
+pip install openai
 
 # Install torch
 conda install pytorch torchvision torchaudio cudatoolkit=11.6 -c pytorch -c conda-forge
@@ -24,17 +27,17 @@ cd packages
 
 # Install Fairseq first to avoid version conflict
 cd Fairseq
-pip install -U -e .
+pip install -e .
 cd ..
 
 # Install Mephisto
 cd Mephisto
-pip install -U -e .
+pip install -e .
 cd ..
 
 # Install ParlAI
 cd ParlAI
-pip install -U -e .
+pip install -e .
 cd ..
 
 conda deactivate
