@@ -46,7 +46,7 @@ class RenderAgent(Agent):
         # logging.info(self.generator)
         self.generator.observe(obs)
         raw_resp = self.generator.act().get('text')
-        fin_resp, prompt = self.renderer(raw_resp)
+        fin_resp, prompt = raw_resp, ''  # No openai render for now self.renderer(raw_resp)
         
         logging.info(f'ACT:\n' +
                      f'\t[ observed ] :: {obs.get("text", "[EMPTY]")}\n' +
