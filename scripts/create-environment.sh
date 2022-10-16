@@ -1,4 +1,7 @@
-source $CONDA_PREFIX/etc/profile.d/conda.sh
+#!/bin/sh
+
+source $(conda info --base)/etc/profile.d/conda.sh
+conda deactivate
 
 # Create conda ParlAI & Mephisto env 
 #   - will create a conda env called <parlai>

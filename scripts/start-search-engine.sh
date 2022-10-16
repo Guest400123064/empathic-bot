@@ -1,4 +1,7 @@
-source $CONDA_PREFIX/etc/profile.d/conda.sh
+#!/bin/sh
+
+source $(conda info --base)/etc/profile.d/conda.sh
+conda deactivate
 
 # Start search engine for blenderbot2
 #   - assuming the search-engine environment is installed
