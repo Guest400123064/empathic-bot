@@ -1,3 +1,5 @@
+source $CONDA_PREFIX/etc/profile.d/conda.sh
+
 # Create conda ParlAI & Mephisto env 
 #   - will create a conda env called <parlai>
 conda create --force -n parlai python=3.8

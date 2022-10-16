@@ -1,3 +1,5 @@
+source $CONDA_PREFIX/etc/profile.d/conda.sh
+
 # Start search engine for blenderbot2
 #   - assuming the search-engine environment is installed
 #   - will serve at <localhost:8080>
