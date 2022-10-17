@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/zsh
 
 source $(conda info --base)/etc/profile.d/conda.sh
 conda deactivate
