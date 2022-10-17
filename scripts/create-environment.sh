@@ -40,9 +40,12 @@ cd ParlAI
 pip install -e .
 cd ..
 
-conda deactivate
-
 # Install Search Engine dependencies
 #   - will create a conda env called <search-engine>
-conda env create --force -f ./SearchEngine/environment.yml
+cd SearchEngine
+pip install -r ./requirements.txt
 cd ..
+
+# Wrap-up
+cd ..
+conda deactivate
