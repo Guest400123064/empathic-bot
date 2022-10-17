@@ -4,7 +4,8 @@ source $(conda info --base)/etc/profile.d/conda.sh
 conda deactivate
 
 # Start search engine for blenderbot2
-#   - assuming the search-engine environment is installed
+#   - assuming the <parlai> environment is installed
 #   - will serve at <localhost:8080>
-conda activate search-engine
-python ./packages/SearchEngine/main.py serve --host localhost:8080 --search_engine="CustomDoc"
+conda activate parlai
+cd ./packages/SearchEngine
+python ./main.py serve --host localhost:8080 --search_engine="CustomDoc"
