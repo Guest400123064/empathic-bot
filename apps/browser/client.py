@@ -133,7 +133,7 @@ def on_close(ws):
 
 
 def _run_browser():
-    host = opt.get('host', 'localhost')
+    host = "localhost"  # opt.get('host', 'localhost')
     serving_port = opt.get('serving_port', 8080)
 
     httpd = HTTPServer((host, serving_port), BrowserHandler)
