@@ -41,10 +41,9 @@ cd ..
 #       + hydra-core<1.1,>=1.0.7 (but you have hydra-core 1.2.0)
 #       + omegaconf<2.1 (but you have omegaconf 2.2.3)
 #   - however, the code seems to be running at this point
-pip install fairseq
-# cd Fairseq
-# pip install -e .
-# cd ..
+cd Fairseq
+pip install -e .
+cd ..
 
 # Install Mephisto
 cd Mephisto
