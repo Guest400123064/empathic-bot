@@ -29,4 +29,4 @@ opt:
         doc_chunk_split_mode: word
         override:
           search_server: http://localhost:5000
-          no_cuda: False
+          no_cuda: True
