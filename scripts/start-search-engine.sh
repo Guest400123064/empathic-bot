@@ -8,4 +8,4 @@ conda deactivate
 #   - will serve at <localhost:8080>
 conda activate parlai
 cd ./packages/SearchEngine
-python ./main.py serve --host localhost:8080 --search_engine="CustomDoc"
+python ./main.py serve --host localhost:5000 --search_engine="CustomDoc"
