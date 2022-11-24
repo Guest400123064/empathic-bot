@@ -157,3 +157,6 @@ packages/ParlAI/data/
 
 # Local editor settings
 .vscode
+
+# Don't save data
+data/
