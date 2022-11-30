@@ -1,0 +1,46 @@
+mephisto:
+  blueprint:
+    _blueprint_type: static_task
+    block_qualification: ???
+    tips_location: /home/dogdog/Projects/empathic-bot/tasks/simple_static_task/assets/tips.csv
+    onboarding_qualification: ???
+    passed_qualification_name: ???
+    max_screening_units: ???
+    use_screening_task: false
+    _group: StaticBlueprint
+    units_per_assignment: 1
+    extra_source_dir: ${task_dir}/server_files/extra_refs
+    data_json: ???
+    data_jsonl: ???
+    data_csv: ${task_dir}/data_tutorial.csv
+    task_source: ${task_dir}/server_files/demo_task.html
+    preview_source: ${task_dir}/server_files/demo_preview.html
+    onboarding_source: ???
+  provider:
+    _provider_type: mock
+    requester_name: ???
+  architect:
+    _architect_type: local
+    server_type: node
+    server_source_path: ???
+    hostname: localhost
+    port: '3000'
+  task:
+    task_name: first-task-tutorial-run
+    task_title: Test static task
+    task_description: This is a simple test of static tasks.
+    task_reward: 0.3
+    task_tags: static,task,testing
+    task_lifetime_in_seconds: 2678400
+    assignment_duration_in_seconds: 1800
+    allowed_concurrent: 0
+    maximum_units_per_worker: 0
+    max_num_concurrent_units: 300
+    submission_timeout: 600
+    post_install_script: ''
+    force_rebuild: false
+  database:
+    _database_type: singleton
+  log_level: info
+task_dir: /home/dogdog/Projects/empathic-bot/tasks/simple_static_task
+num_tasks: 5
