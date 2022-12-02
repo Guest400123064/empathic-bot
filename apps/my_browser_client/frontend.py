@@ -1,0 +1,145 @@
+# -*- coding: utf-8 -*-
+# =============================================================================
+# Author: Yuxuan Wang
+# Date: 12-03-2022
+# =============================================================================
+"""
+This file copies static HTML from parlai.interactive_web.py for a simple 
+  chatbot client frontend.
+"""
+
+STYLE_SHEET  = "https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.css"
+FONT_AWESOME = "https://use.fontawesome.com/releases/v5.3.1/js/all.js"
+WEB_HTML     = """
+<html>
+    <link rel="stylesheet" href={} />
+    <script defer src={}></script>
+    <head><title> Interactive Run </title></head>
+    <body>
+        <div class="columns" style="height: 100%">
+            <div class="column is-three-fifths is-offset-one-fifth">
+              <section class="hero is-info is-large has-background-light has-text-grey-dark" style="height: 100%">
+                <div id="parent" class="hero-body" style="overflow: auto; height: calc(100% - 76px); padding-top: 1em; padding-bottom: 0;">
+                    <article class="media">
+                      <div class="media-content">
+                        <div class="content">
+                          <p>
+                            <strong>Instructions</strong>
+                            <br>
+                            Enter a message, and the model will respond interactively.
+                          </p>
+                        </div>
+                      </div>
+                    </article>
+                </div>
+                <div class="hero-foot column is-three-fifths is-offset-one-fifth" style="height: 76px">
+                  <form id = "interact">
+                      <div class="field is-grouped">
+                        <p class="control is-expanded">
+                          <input class="input" type="text" id="userIn" placeholder="Type in a message">
+                        </p>
+                        <p class="control">
+                          <button id="respond" type="submit" class="button has-text-white-ter has-background-grey-dark">
+                            Submit
+                          </button>
+                        </p>
+                        <p class="control">
+                          <button id="restart" type="reset" class="button has-text-white-ter has-background-grey-dark">
+                            Restart Conversation
+                          </button>
+                        </p>
+                      </div>
+                  </form>
+                </div>
+              </section>
+            </div>
+        </div>
+
+        <script>
+            function createChatRow(agent, text) {{
+                var article = document.createElement("article");
+                article.className = "media"
+
+                var figure = document.createElement("figure");
+                figure.className = "media-left";
+
+                var span = document.createElement("span");
+                span.className = "icon is-large";
+
+                var icon = document.createElement("i");
+                icon.className = "fas fas fa-2x" + (agent === "You" ? " fa-user " : agent === "Model" ? " fa-robot" : "");
+
+                var media = document.createElement("div");
+                media.className = "media-content";
+
+                var content = document.createElement("div");
+                content.className = "content";
+
+                var para = document.createElement("p");
+                var paraText = document.createTextNode(text);
+
+                var strong = document.createElement("strong");
+                strong.innerHTML = agent;
+                var br = document.createElement("br");
+
+                para.appendChild(strong);
+                para.appendChild(br);
+                para.appendChild(paraText);
+                content.appendChild(para);
+                media.appendChild(content);
+
+                span.appendChild(icon);
+                figure.appendChild(span);
+
+                if (agent !== "Instructions") {{
+                    article.appendChild(figure);
+                }};
+
+                article.appendChild(media);
+
+                return article;
+            }}
+            document.getElementById("interact").addEventListener("submit", function(event){{
+                event.preventDefault()
+                var text = document.getElementById("userIn").value;
+                document.getElementById('userIn').value = "";
+
+                fetch('/interact', {{
+                    headers: {{
+                        'Content-Type': 'application/json'
+                    }},
+                    method: 'POST',
+                    body: text
+                }}).then(response=>response.json()).then(data=>{{
+                    var parDiv = document.getElementById("parent");
+
+                    parDiv.append(createChatRow("You", text));
+
+                    // Change info for Model response
+                    parDiv.append(createChatRow("Model", data.text));
+                    parDiv.scrollTo(0, parDiv.scrollHeight);
+                }})
+            }});
+            document.getElementById("interact").addEventListener("reset", function(event){{
+                event.preventDefault()
+                var text = document.getElementById("userIn").value;
+                document.getElementById('userIn').value = "";
+
+                fetch('/reset', {{
+                    headers: {{
+                        'Content-Type': 'application/json'
+                    }},
+                    method: 'POST',
+                }}).then(response=>response.json()).then(data=>{{
+                    var parDiv = document.getElementById("parent");
+
+                    parDiv.innerHTML = '';
+                    parDiv.append(createChatRow("Instructions", "Enter a message, and the model will respond interactively."));
+                    parDiv.scrollTo(0, parDiv.scrollHeight);
+                }})
+            }});
+        </script>
+
+    </body>
+</html>
+"""
