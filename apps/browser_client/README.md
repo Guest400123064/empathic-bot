@@ -9,7 +9,7 @@ PROGRAM_FOLDER
   |-- example.png
   |-- chat
         |-- .gitkeep
-        |-- chat_history.json
+        |-- example-12-04-17-59.json
 ```
 So, one should be in the `PROGRAM_FOLDER`. You can check your current working directory in command line/bash by typing `pwd`.
 
@@ -29,16 +29,18 @@ __Get Started:__ Under `PROGRAM_FOLDER`, in command line, type,
 ```
 python main.py < your_id > --host-bot < GCP_addr > --port-bot < GCP_port >
 ```
-In the command, `your_id` is simply used to generate the filename for produced chat history `JSON` file. So, better without any white space. `GCP_addr` and `GCP_port` are used to indicate where is the chatbot hosted. By default, the client script assumes the bot running locally, with default parameter `localhost` and `35496` respectively. For example, suppose the user ID is `wangy49`, with the chatbot hosted at `34.136.228.74` (port `35496`), the corresponding command should be,
+In the command, `your_id` is simply used to generate the filename for produced chat history `JSON` file. So, better without any white space. `GCP_addr` and `GCP_port` are used to indicate where is the chatbot hosted. By default, the client script assumes the bot running locally, with default parameter `localhost` and `35496` respectively. For example, suppose the user ID is `wangy49`, with the chatbot hosted at `34.27.46.58` (port `35496`), the corresponding command should be,
 ```
-python main.py wangy49 --host-bot 34.136.228.74 --port-bot 35496
+python main.py wangy49 --host-bot 34.27.46.58
 ```
 If the client starts successfully, you should see from command line,
 ```
-Connected to chatbot at < ws://34.136.228.74:35496/websocket >.
+Connected to chatbot at < ws://34.27.46.58:35496/websocket >.
 Please access the chatting service at < http://localhost:8080/ >.
 ```
-Now, in your browser (where you usually type `google.com`), enter `http://localhost:8080/` and hit enter. You should be able to see a simple chat GUI (see below). Hit enter to start the chat service. ![example-gui](example.png) 
+Now, in your browser (where you usually type `google.com`), enter `http://localhost:8080/` and hit enter. You should be able to see a simple chat GUI (see below). Hit enter to start the chat service. 
+
+![example-gui](example.png) 
 
 __Stop Chatting:__ In the input block, type `[DONE]` and hit enter to stop the chat service and the chat history should be saved locally under `PROGRAM_FOLDER/chat/`.
 
