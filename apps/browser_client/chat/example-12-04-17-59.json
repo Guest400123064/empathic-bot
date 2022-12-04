@@ -1,0 +1,54 @@
+[
+    {
+        "role": "User",
+        "text": ""
+    },
+    {
+        "text": "Welcome to the overworld for the ParlAI messenger chatbot demo. Please type \"begin\" to start, or \"exit\" to exit",
+        "quick_replies": [
+            "begin",
+            "exit"
+        ],
+        "role": "Bot"
+    },
+    {
+        "role": "User",
+        "text": "begin"
+    },
+    {
+        "text": "Welcome to the ParlAI Chatbot demo. You are now paired with a bot - feel free to send a message.Type [DONE] to finish the chat, or [RESET] to reset the dialogue history.",
+        "quick_replies": null,
+        "role": "Bot"
+    },
+    {
+        "role": "User",
+        "text": "hi"
+    },
+    {
+        "text": "[ echo ] :: hi",
+        "quick_replies": null,
+        "role": "Bot"
+    },
+    {
+        "role": "User",
+        "text": "who are you"
+    },
+    {
+        "text": "[ echo ] :: who are you",
+        "quick_replies": null,
+        "role": "Bot"
+    },
+    {
+        "role": "User",
+        "text": "bye"
+    },
+    {
+        "text": "[ echo ] :: bye",
+        "quick_replies": null,
+        "role": "Bot"
+    },
+    {
+        "role": "User",
+        "text": "[DONE]"
+    }
+]

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # =============================================================================
 # Author: Yuxuan Wang
-# Date: 12-03-2022
+# Date: 12-04-2022
 # =============================================================================
 """
 The main client script for chatting and chat-history collection. This script
@@ -87,8 +87,8 @@ class G:
         if not os.path.exists(chat_dir):
             os.makedirs(chat_dir)
 
-        file_name = f"{user_name}-{datetime.datetime.now():%Y-%m-%d-%H-%M}.json"
-        with open(G.chat_dir / file_name, "w") as f:
+        file_name = f"{user_name}-{datetime.datetime.now():%m-%d-%H-%M}.json"
+        with open(chat_dir / file_name, "w") as f:
             json.dump(G.chat_history, f, indent=4)
 
     @staticmethod
