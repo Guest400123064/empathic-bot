@@ -5,7 +5,7 @@
 # =============================================================================
 """
 This file copies static HTML from parlai.interactive_web.py for a simple 
-  chatbot client frontend.
+  chatbot client frontend. However, the reset functionality is removed.
 """
 
 STYLE_SHEET  = "https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.css"
@@ -41,11 +41,6 @@ WEB_HTML     = """
                         <p class="control">
                           <button id="respond" type="submit" class="button has-text-white-ter has-background-grey-dark">
                             Submit
-                          </button>
-                        </p>
-                        <p class="control">
-                          <button id="restart" type="reset" class="button has-text-white-ter has-background-grey-dark">
-                            Restart Conversation
                           </button>
                         </p>
                       </div>
@@ -117,24 +112,6 @@ WEB_HTML     = """
 
                     // Change info for Model response
                     parDiv.append(createChatRow("Model", data.text));
-                    parDiv.scrollTo(0, parDiv.scrollHeight);
-                }})
-            }});
-            document.getElementById("interact").addEventListener("reset", function(event){{
-                event.preventDefault()
-                var text = document.getElementById("userIn").value;
-                document.getElementById('userIn').value = "";
-
-                fetch('/reset', {{
-                    headers: {{
-                        'Content-Type': 'application/json'
-                    }},
-                    method: 'POST',
-                }}).then(response=>response.json()).then(data=>{{
-                    var parDiv = document.getElementById("parent");
-
-                    parDiv.innerHTML = '';
-                    parDiv.append(createChatRow("Instructions", "Enter a message, and the model will respond interactively."));
                     parDiv.scrollTo(0, parDiv.scrollHeight);
                 }})
             }});
