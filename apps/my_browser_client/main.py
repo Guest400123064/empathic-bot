@@ -22,6 +22,7 @@ from _gui import WEB_HTML, STYLE_SHEET, FONT_AWESOME
 class G:
     """Global variables and helper functions."""
 
+    chat_end_tok = "[DONE]"
     chat_history = []
 
     keep_running = True
@@ -120,8 +121,6 @@ class ChatHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         """Handle POST request, especially replying to a chat message."""
         
-        chat_stop_token = "[DONE]"
-        
         if self.path == "/interact":
             
             # Get user input and forward it to the bot via websocket
@@ -129,7 +128,7 @@ class ChatHandler(BaseHTTPRequestHandler):
             human_response = self.rfile.read(content_length).decode("utf-8")
             G.ws_send(human_response)
 
-            if human_response == chat_stop_token:
+            if human_response == G.chat_end_tok:
                 G.stop_httpd()
                 return
 
