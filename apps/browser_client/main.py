@@ -91,7 +91,7 @@ class G:
         if not os.path.exists(chat_dir):
             os.makedirs(chat_dir)
 
-        file_name = f"{user_name}-{datetime.datetime.now():%m-%d-%H-%M}.json"
+        file_name = f"{user_name}-{datetime.datetime.now():%m_%d_%H_%M}.json"
         with open(chat_dir / file_name, "w") as f:
             json.dump(G.chat_history, f, indent=4)
 

@@ -9,7 +9,7 @@ PROGRAM_FOLDER
   |-- example.png
   |-- chat
         |-- .gitkeep
-        |-- example-12-04-17-59.json
+        |-- example-12_04_17_59.json
 ```
 So, one should be in the `PROGRAM_FOLDER`. You can check your current working directory in command line/bash by typing `pwd`.
 
@@ -45,7 +45,7 @@ Now, in your browser (where you usually type `google.com`), enter `http://localh
 __Stop Chatting:__ In the input block, type `[DONE]` and hit enter to stop the chat service __(DO NOT FORGET THE SQUARE BRACKETS)__, and the chat history should be saved locally under `PROGRAM_FOLDER/chat/`.
 
 ## __Chat History__
-Chat history is saved as `< your_id >-< date_time >.json` in a __list-of-dictionaries__ format. Each dictionary corresponds to a user/bot response. The `PROGRAM_FOLDER/chat/example-12-04-17-59.json` examples should be clear enough.
+Chat history is saved as `< your_id >-< date_time >.json` in a __list-of-dictionaries__ format. Each dictionary corresponds to a user/bot response. The `PROGRAM_FOLDER/chat/example-12_04_17_59.json` examples should be clear enough.
 
 ## __Potential Problems__
 __Local Browser Port Blocked:__ It is possible that the default port __for browser__ (8080) is blocked. You can try to use other port like 5000 or 8000, e.g.,
