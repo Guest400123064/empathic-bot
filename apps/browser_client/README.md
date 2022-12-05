@@ -33,7 +33,7 @@ In the command, `your_id` is simply used to generate the filename for produced c
 ```
 python main.py wangy49 --host-bot 34.27.46.58
 ```
-If the client starts successfully, you should see from command line,
+Currently, there is a dummy chatbot hosted at `34.27.46.58` that echos back everything you typed with the format `"[echo] :: < your_message >"`. Thus, copy-paste the above command and change the user ID to your own choice should work. If the client starts successfully, you should see from command line,
 ```
 Connected to chatbot at < ws://34.27.46.58:35496/websocket >.
 Please access the chatting service at < http://localhost:8080/ >.
