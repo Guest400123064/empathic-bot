@@ -66,10 +66,14 @@ class G:
         """Start websocket connection with chatbot."""
         
         addr = f"ws://{host}:{port}/websocket"
-
         G.websocket = websocket.WebSocket()
-        G.websocket.connect(addr)
-        print(f"Connected to chatbot at < {addr} >.")
+
+        try:
+            G.websocket.connect(addr)
+            print(f"Connected to chatbot at < {addr} >.")
+        except ConnectionRefusedError:
+            print(f"Failed to connect to chatbot at < {addr} >. Maybe wrong host or port?")
+            exit(1)
 
     @staticmethod
     def save_chat_history(user_name: str):

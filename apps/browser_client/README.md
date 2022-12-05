@@ -33,7 +33,7 @@ In the command, `your_id` is simply used to generate the filename for produced c
 ```
 python main.py wangy49 --host-bot 34.27.46.58
 ```
-Currently, there is a dummy chatbot hosted at `34.27.46.58` that echos back everything you typed with the format `"[echo] :: < your_message >"`. Thus, copy-paste the above command and change the user ID to your own choice should work. If the client starts successfully, you should see from command line,
+Currently, there is a dummy chatbot hosted at `34.27.46.58` that echos back everything you typed with the format `"[ echo ] :: < your_message >"`. Thus, copy-paste the above command and __change the user ID to your own choice__ should work (don't use `wangy49`, although the script still runs). If the client starts successfully, you should see from command line,
 ```
 Connected to chatbot at < ws://34.27.46.58:35496/websocket >.
 Please access the chatting service at < http://localhost:8080/ >.
@@ -42,7 +42,20 @@ Now, in your browser (where you usually type `google.com`), enter `http://localh
 
 ![example-gui](example.png) 
 
-__Stop Chatting:__ In the input block, type `[DONE]` and hit enter to stop the chat service and the chat history should be saved locally under `PROGRAM_FOLDER/chat/`.
+__Stop Chatting:__ In the input block, type `[DONE]` and hit enter to stop the chat service __(DO NOT FORGET THE SQUARE BRACKETS)__, and the chat history should be saved locally under `PROGRAM_FOLDER/chat/`.
 
 ## __Chat History__
 Chat history is saved as `< your_id >-< date_time >.json` in a __list-of-dictionaries__ format. Each dictionary corresponds to a user/bot response. The `PROGRAM_FOLDER/chat/example-12-04-17-59.json` examples should be clear enough.
+
+## __Potential Problems__
+__Local Browser Port Blocked:__ It is possible that the default port __for browser__ (8080) is blocked. You can try to use other port like 5000 or 8000, e.g.,
+```
+python main.py < your_id > --host-bot < GCP_addr > --port-browser 5000
+```
+
+__GCP Address Changed:__ Currently, the GCP VM instances' addresses are ephemeral. They change every time I reboot the VMs. If the host IP address changed, you may see from command line (suppose you inputted `--host-bot localhost`),
+```
+Failed to connect to chatbot at < ws://localhost:35496/websocket >. Maybe wrong host?
+```
+
+__Wrong GCP Port:__ By default, the hosted chatbot listens to port 35496. If the port does not work (same error message as address change, i.e., connection refused), please let me know. This is an unexpected behavior, except that the bot is not started.
