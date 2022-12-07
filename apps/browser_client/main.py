@@ -93,7 +93,10 @@ class G:
 
         file_name = f"{user_name}-{datetime.datetime.now():%m_%d_%H_%M}.json"
         with open(chat_dir / file_name, "w") as f:
-            json.dump(G.chat_history, f, indent=4)
+            data = {"id": user_name,
+                    "timestamp": str(datetime.datetime.now().isoformat()),
+                    "chat_hist": G.chat_history}
+            json.dump(data, f, indent=4)
 
     @staticmethod
     def stop_httpd():
