@@ -11,6 +11,9 @@ This module contains a wrapper for GPT-3-based style transfer. On initialization
 
 from typing import Callable, Dict
 
+import os
+OPENAI_KEY = os.getenv("OPENAI_API_KEY")
+
 import json
 import logging
 
@@ -112,7 +115,7 @@ class Gpt3RenderAgent(Agent):
             if self.renderer_config.get("is_dry_run", False):
                 return s, prompt
 
-            openai.api_key = opt["token"]
+            openai.api_key = OPENAI_KEY
             completion = openai.Completion.create(prompt=prompt, **opt["generation_config"])
             return completion["choices"][0]["text"].rstrip("}").strip(), prompt
 
