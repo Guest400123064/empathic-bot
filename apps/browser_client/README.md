@@ -1,5 +1,5 @@
 # __Simple Browser Chat__
-This is a simple re-implementation of `ParlAI`'s browser chat client using mostly standard library for portability. It also has a simple functionality of collecting chat history. __Note: all instructions below assume that we are in the program folder, e.g., `browser_client`__ The structure of the folders should be,
+This is a simple re-implementation of `ParlAI`'s browser chat client using mostly standard library for portability. It also has a simple functionality of collecting chat history. __Note: You should download the entire folder either from GitHub directly or from a `browser_client.zip` file [here](https://github.com/Guest400123064/empathic-bot/tree/main/uploads). All instructions below assume that we are in the program folder, e.g., `browser_client`__ The structure of the folders should be,
 ```
 PROGRAM_FOLDER
   |-- README.md
