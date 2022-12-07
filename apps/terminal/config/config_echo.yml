@@ -14,13 +14,19 @@ opt:
   debug: True
   models:
     RenderBot:
-      model: _render/gpt3
+      model: _custom/gpt3_render
       gpt3:
-        token: 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
-        style: extroverted
+        token: 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
+        style: empathetic
+
+        # If true, the bot will echo the user's input
+        is_dry_run: True
+        
+        # These arguments will be fed to openai's completion API call,
+        # see https://beta.openai.com/docs/api-reference/completions/create
         generation_config:
-          model: text-ada-001  # "text-davinci-002"
-          # top_p: 0.2
+          model: text-ada-001
+          top_p: 1
           max_tokens: 50
           temperature: 0
       generator:

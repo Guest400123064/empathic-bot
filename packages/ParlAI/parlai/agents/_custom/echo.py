@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*-
+# =============================================================================
+# Author: Yuxuan Wang
+# Date: 12-06-2022
+# =============================================================================
+"""
+This module contains a dummy agent that simply echos everything it observed.
+"""
+
 from typing import Dict
 
 import json
@@ -32,12 +41,10 @@ class EchoAgent(Agent):
     def act(self) -> Dict:
         """Simply copy the input messages"""
 
-        obs = self.observation
-        if obs is None:
+        observation = self.observation
+        if observation is None:
             return {"text": "Nothing to reply to yet"}
 
-        ipt = obs.get("text", "I don\"t know")
-        return {
-            "id": self.getID(),
-            "text": f"[ echo ] :: {self.resp_fn(ipt)}"
-        }
+        response = observation.get("text", "I don\"t know")
+        return {"id": self.getID(),
+                "text": f"[ echo ] :: {response}"}

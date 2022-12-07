@@ -94,3 +94,12 @@ class RenderAgent(Agent):
             return completion['choices'][0]['text'].strip('}'), prompt
  
         return gpt_completion
+    
+# %%
+t = """Here is a sentence of high self-disclosure: {I was always scared as a catholic to go to church as a kid and would always talk my mom out of going which probably turned out to save me in the long run.}
+Here is another sentence of high self-disclosure: {I love that, personally my father went outside to smoke and never smoked with us in the car but my friends parents did and I would feel so sick after being in there car no child should suffer through it.}
+Here is another sentence of high self-disclosure: {My father was in the Navy and I have two sisters in the Army.}
+Here is some text: {"""
+print(t)
+
+# %%
