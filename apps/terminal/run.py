@@ -10,8 +10,8 @@ Terminal Chat Runner. Used to run the terminal chat server.
 import os
 import logging
 
-if os.path.exists('log'):
-    os.makedirs('log')
+if not os.path.exists('./log'):
+    os.makedirs('./log')
 
 file_handler = logging.FileHandler('log/run.log', 'w')
 formatter    = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
