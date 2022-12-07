@@ -1,3 +1,5 @@
+from typing import Dict
+
 import json
 import logging
 
@@ -9,43 +11,33 @@ class EchoAgent(Agent):
         it also print out all options it receives."""
 
     def __init__(self, opt, shared=None):
-        """Init agent and echo options"""
-
         super().__init__(opt)
-        logging.info('CONFIG:\n' + json.dumps(opt, indent=True))
 
-        self.id = 'EchoBot'
+        logging.debug("CONFIG:\n" + json.dumps(opt, indent=True))
+
+        self.id = __class__.__name__
         if shared is None:
-            logging.info('CREATED FROM PROTOTYPE')
-            self.resp_fn = lambda x: x
+            logging.debug("CREATED FROM PROTOTYPE")
         else:
-            logging.info('CREATED FROM COPY')
-            self.resp_fn = shared['resp_fn']
+            logging.debug("CREATED FROM COPY")
 
-    def share(self) -> dict:
+    def share(self) -> Dict:
         """Copy response function <self.resp_fn>"""
 
-        logging.info('MODEL COPIED')
+        logging.debug("MODEL COPIED")
 
         shared = super().share()
-        shared['resp_fn'] = self.resp_fn
         return shared
 
-    def act(self):
+    def act(self) -> Dict:
         """Simply copy the input messages"""
 
         obs = self.observation
         if obs is None:
-            return {'text': 'Nothing to reply to yet'}
+            return {"text": "Nothing to reply to yet"}
 
-        ipt = obs.get('text', 'I don\'t know')
-        raw_resp = self.resp_fn(ipt)
+        ipt = obs.get("text", "I don\"t know")
         return {
-            'id': self.getID(),
-            'text': f'[ echo ] :: {self.render(raw_resp)}'
+            "id": self.getID(),
+            "text": f"[ echo ] :: {self.resp_fn(ipt)}"
         }
-
-    def render(self, s: str) -> str:
-
-        # GPT-3 API call
-        return s
