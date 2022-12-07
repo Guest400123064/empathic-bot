@@ -16,7 +16,6 @@ opt:
     RenderBot:
       model: _custom/gpt3_render
       gpt3:
-        token: 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
         style: empathetic
 
         # If true, the bot will echo the user's input
