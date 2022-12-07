@@ -9,7 +9,7 @@ conda create --force -n parlai-light python=3.9
 conda activate parlai-light
 
 # Install torch
-pip install pytorch==1.12.1
+pip install torch==1.12.1
 
 # Install openai (for gpt3 prompting)
 pip install openai
