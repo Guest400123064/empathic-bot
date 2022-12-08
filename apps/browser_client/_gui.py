@@ -26,7 +26,7 @@ WEB_HTML     = """
                           <p>
                             <strong>Instructions</strong>
                             <br>
-                            Enter a message, and the model will respond interactively.
+                            Hit 'Enter', and the model will respond interactively.
                           </p>
                         </div>
                       </div>

@@ -38,7 +38,7 @@ Currently, there is a dummy chatbot hosted at `34.27.46.58` that echos back ever
 Connected to chatbot at < ws://34.27.46.58:35496/websocket >.
 Please access the chatting service at < http://localhost:8080/ >.
 ```
-Now, in your browser (where you usually type `google.com`), enter `http://localhost:8080/` and hit enter. You should be able to see a simple chat GUI (see below). Hit enter to start the chat service. 
+Now, in your browser (where you usually type `google.com`), enter `http://localhost:8080/` and hit enter. You should be able to see a simple chat GUI (see below). __Hit enter to start the chat service. The conversation won't start automatically.__
 
 ![example-gui](example.png) 
 
