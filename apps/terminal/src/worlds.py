@@ -83,7 +83,6 @@ class RenderBotChatTaskWorld(World):
                 print(response)
                 print("~~~~~~~~~~~")
                 self.agent.observe(response)
-                print(type(self.agent))
 
     def episode_done(self):
         return self.episodeDone
