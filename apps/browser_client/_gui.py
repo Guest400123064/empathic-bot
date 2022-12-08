@@ -26,7 +26,9 @@ WEB_HTML     = """
                           <p>
                             <strong>Instructions</strong>
                             <br>
-                            Hit 'Enter', and the model will respond interactively.
+                            Hit 'Enter', and the model will respond interactively. You may experience latency in seeing your input and the model's response 
+                              since your input is sent to the model for processing and appears together with the response after processing. You MUST type the 
+                              token "[DONE]" (no double quotes, with square brackets) to end the conversation and SAVE THE CHAT HISTORY.
                           </p>
                         </div>
                       </div>
