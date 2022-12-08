@@ -19,14 +19,15 @@ opt:
         style: empathetic
 
         # If true, the bot will echo the user's input
-        is_dry_run: True
+        is_dry_run: False
         
         # These arguments will be fed to openai's completion API call,
         # see https://beta.openai.com/docs/api-reference/completions/create
         generation_config:
-          model: text-ada-001
+          model: text-davinci-002
           top_p: 1
           max_tokens: 50
           temperature: 0
+          stop: ["}"]
       generator:
         model: _custom/echo

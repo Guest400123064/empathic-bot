@@ -117,6 +117,6 @@ class Gpt3RenderAgent(Agent):
 
             openai.api_key = OPENAI_API_KEY
             completion = openai.Completion.create(prompt=prompt, **opt["generation_config"])
-            return completion["choices"][0]["text"].rstrip("}").strip(), prompt
+            return completion["choices"][0]["text"].strip(), prompt
 
         return gpt_completion
