@@ -19,7 +19,7 @@ opt:
         style: empathetic
 
         # If true, the bot will echo the user's input
-        is_dry_run: False
+        is_dry_run: True
         
         # These arguments will be fed to openai's completion API call,
         # see https://beta.openai.com/docs/api-reference/completions/create
