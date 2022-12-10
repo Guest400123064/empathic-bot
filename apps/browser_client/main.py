@@ -16,7 +16,7 @@ import json
 import websocket
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-from _gui import WEB_HTML, STYLE_SHEET, FONT_AWESOME
+from _gui import WEB_HTML, STYLE_SHEET, FONT_AWESOME, END_MESSAGE
 
 
 class G:
@@ -109,7 +109,8 @@ class G:
         """Start a http server for the frontend."""
         
         G.httpd = HTTPServer(("localhost", port), ChatHandler)
-        print(f"Please access the chatting service at < http://localhost:{port}/ >.")
+        print(f"Please access the chatting service at < http://localhost:{port}/ >."
+                " Refresh the page if you don't see the chat window in your browser.")
         
         while G.keep_running:
             G.httpd.handle_request()
@@ -135,10 +136,6 @@ class ChatHandler(BaseHTTPRequestHandler):
             human_response = self.rfile.read(content_length).decode("utf-8")
             G.ws_send(human_response)
 
-            if human_response == G.chat_end_tok:
-                G.stop_httpd()
-                return
-
             # Prepare bot response header for user
             self.send_response(200)
             self.send_header("Content-type", "application/json")
@@ -146,8 +143,17 @@ class ChatHandler(BaseHTTPRequestHandler):
 
             # Get bot response from websocket and send it back to user
             model_response = {"id": "Model", "episode_done": False}
-            model_response.update(G.ws_recv())
-            self.wfile.write(bytes(json.dumps(model_response), "utf-8"))
+            
+            # End of chat
+            if human_response == G.chat_end_tok:
+                model_response.update({"text": END_MESSAGE, "episode_done": True})
+                self.wfile.write(bytes(json.dumps(model_response), "utf-8"))
+                G.stop_httpd()
+            
+            # Normal interactive chat
+            else:
+                model_response.update(G.ws_recv())
+                self.wfile.write(bytes(json.dumps(model_response), "utf-8"))
 
     def do_GET(self):
         """Respond to GET request, especially the initial load."""        

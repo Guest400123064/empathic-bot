@@ -8,6 +8,8 @@ This file copies static HTML from parlai.interactive_web.py for a simple
   chatbot client frontend. However, the reset functionality is removed.
 """
 
+END_MESSAGE  = ("Thank you for chatting with me! Chat history saved at 'chat/< YOUR ID >-< DATETIME >.json'. "
+                "And please finish the survey at < https://nyu.qualtrics.com/jfe/form/SV_26jZ2beozdQrcHk >.")
 STYLE_SHEET  = "https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.css"
 FONT_AWESOME = "https://use.fontawesome.com/releases/v5.3.1/js/all.js"
 WEB_HTML     = """

@@ -40,6 +40,11 @@ class Gpt3RenderAgent(Agent):
         
         self.renderer = self.create_renderer(self.renderer_config)
         
+        # If we want to save the history of rendered responses
+        #   or the base response from the generator. The idea 
+        #   is to set whether the generator is aware of the style transfer
+        self.is_render_aware = opt.get("is_render_aware", False)
+        
         # Create generator from config file (first-time instantiation)
         if shared is None:
             logging.info("CREATED FROM PROTOTYPE")
@@ -58,6 +63,20 @@ class Gpt3RenderAgent(Agent):
         shared = super().share()
         shared[__class__.generator_shared_key] = self.generator.share()
         return shared
+    
+    def render_aware_act(self, observation) -> Dict:
+        """Render the basic generated response and make the generator 
+            aware of the style-transferred response by calling `generator.self_observe`
+            to update the history of the generator."""
+            
+        message  = self.generator.batch_act([observation])[0]
+        response = self.renderer(message)
+        
+        message.force_set("text", response["text"])
+        self.generator.self_observe(message)
+        
+        logging.info(f"HISTORY: {self.generator.history.get_history_str()}")
+        return response
 
     def act(self) -> Dict:
         """Forward the observation to the wrapped generator, then call the 
@@ -65,18 +84,22 @@ class Gpt3RenderAgent(Agent):
 
         observation = self.observation
         if observation is None:
-            return {"text": "Nothing to reply to yet"}
+            return {"id":            self.getID(), 
+                    "gpt3_prompt":   "",
+                    "text":          "",
+                    "base_response": ""}
 
         # Call the wrapped generator
         self.generator.observe(observation)
-        base_response = self.generator.act().get("text")
+        if (self.is_render_aware 
+            and hasattr(self.generator, "batch_act")
+            and hasattr(self.generator, "history")
+            and hasattr(self.generator, "self_observe")):
+            logging.info("RENDER AWARE ACT")
+            return self.render_aware_act(self.generator.observation)
         
-        # Call the renderer to perform style transfer
-        response, prompt = self.renderer(base_response)
-        return {"id":            self.getID(),
-                "base_response": base_response,
-                "gpt3_prompt":   prompt,
-                "text":          response}
+        logging.info("NORMAL ACT")
+        return self.renderer(self.generator.act())
 
     def reset(self):
         """Reset the agent, clearing its observation."""
@@ -84,7 +107,7 @@ class Gpt3RenderAgent(Agent):
         self.observation = None
         self.generator.reset()
 
-    def create_renderer(self, opt: Dict) -> Callable[[str], str]:
+    def create_renderer(self, opt: Dict) -> Callable[[Dict], Dict]:
         """Create a GPT-3 renderer function based on the options passed in."""
 
         import openai
@@ -113,10 +136,22 @@ class Gpt3RenderAgent(Agent):
 
             # For debugging, return the prompt without calling GPT-3
             if self.renderer_config.get("is_dry_run", False):
-                return s, prompt
+                return f"[ echo render ] :: {s}", prompt
 
             openai.api_key = OPENAI_API_KEY
             completion = openai.Completion.create(prompt=prompt, **opt["generation_config"])
             return completion["choices"][0]["text"].strip(), prompt
+        
+        def renderer(message: Dict) -> Dict:
+            """Take a raw bot response and return a rendered response using 
+                the GPT-3 style-transfer defined above."""
+            
+            base_text = message["text"]
+            text, prompt = gpt_completion(base_text)
+            response = {"id":            self.getID(),
+                        "gpt3_prompt":   prompt,
+                        "base_response": base_text,
+                        "text":          text}
+            return response
 
-        return gpt_completion
+        return renderer
