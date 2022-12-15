@@ -19,7 +19,7 @@ opt:
       # If true, the bot will store rendered self-utterance instead of 
       # the original utterance. This only works for the agent that 
       # stores dialogue history (i.e., has the `.history` attribute)
-      is_render_aware: True
+      is_render_aware: False
 
       # GPT-3 config
       gpt3:
