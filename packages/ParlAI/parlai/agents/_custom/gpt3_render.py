@@ -14,6 +14,8 @@ from typing import Callable, Dict
 import os
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
+import re
+
 import json
 import logging
 
@@ -147,7 +149,8 @@ class Gpt3RenderAgent(Agent):
                 the GPT-3 style-transfer defined above."""
                 
             def clean_token(token: str) -> str:
-                return token.replace("_POTENTIALLY_UNSAFE__", "").strip()
+                token = re.sub(r"_POTENTIALLY_UNSAFE__", "", token, flags=re.IGNORECASE)
+                return token.strip()
             
             base_text = clean_token(message["text"])
             text, prompt = gpt_completion(base_text)
