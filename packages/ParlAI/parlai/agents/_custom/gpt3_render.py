@@ -145,8 +145,11 @@ class Gpt3RenderAgent(Agent):
         def renderer(message: Dict) -> Dict:
             """Take a raw bot response and return a rendered response using 
                 the GPT-3 style-transfer defined above."""
+                
+            def clean_token(token: str) -> str:
+                return token.replace("_POTENTIALLY_UNSAFE__", "").strip()
             
-            base_text = message["text"]
+            base_text = clean_token(message["text"])
             text, prompt = gpt_completion(base_text)
             response = {"id":            self.getID(),
                         "gpt3_prompt":   prompt,
