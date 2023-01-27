@@ -31,7 +31,7 @@ opt:
         # These arguments will be fed to openai's completion API call,
         # see https://beta.openai.com/docs/api-reference/completions/create
         generation_config:
-          model: text-davinci-002
+          model: text-davinci-003
           top_p: 1
           max_tokens: 50
           temperature: 0
