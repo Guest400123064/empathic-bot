@@ -5,11 +5,13 @@
 # LICENSE file in the root directory of this source tree.
 
 import time
+import asyncio
 from functools import partial
 from dataclasses import dataclass, fields
 from prometheus_client import Histogram, Gauge, Counter  # type: ignore
 from mephisto.data_model.worker import Worker
 from mephisto.data_model.agent import Agent, OnboardingAgent
+from mephisto.data_model.assignment import AssignmentState
 from mephisto.utils.qualifications import worker_is_qualified
 from mephisto.abstractions.blueprint import AgentState
 from mephisto.abstractions.blueprints.mixins.onboarding_required import (
@@ -111,6 +113,10 @@ class WorkerPool:
 
         # Deferred initializiation
         self._live_run: Optional["LiveTaskRun"] = None
+
+        # Track the timeout status of assignments
+        self._max_wait_time = 4
+        self._waiting_assignments = set()
 
     def register_run(self, live_run: "LiveTaskRun") -> None:
         """Register a live run for this worker pool"""
@@ -273,13 +279,75 @@ class WorkerPool:
                 # See if the concurrent assignment is ready to launch
                 logger.debug(f"Attempting to launch {assignment}.")
                 agents = await loop.run_in_executor(None, assignment.get_agents)
-                if None in agents:
-                    return  # need to wait for all agents to be here to launch
 
-                for queried_agent in agents:
-                    if queried_agent.get_status() != AgentState.STATUS_WAITING:
-                        logger.debug(f"Delaying launch of {assignment}, should retry.")
-                        return  # Need to wait for all agents to be waiting to launch
+                # Timeout disabled
+                if self._max_wait_time <= 0:
+                    if None in agents:
+                        return  # need to wait for all agents to be here to launch
+
+                    for queried_agent in agents:
+                        if queried_agent.get_status() != AgentState.STATUS_WAITING:
+                            logger.debug(f"Delaying launch of {assignment}, should retry.")
+                            return  # Need to wait for all agents to be waiting to launch
+
+                    # Mypy not-null cast
+                    non_null_agents = [a for a in agents if a is not None]
+                    # Launch the backend for this assignment
+                    registered_agents = [
+                        self.agents[a.get_agent_id()]
+                        for a in non_null_agents
+                        if a is not None
+                    ]
+
+                    live_run.task_runner.execute_assignment(assignment, registered_agents)
+                    return
+
+                # Timeout enabled
+                if assignment.db_id in self._waiting_assignments:
+                    if None in agents:
+                        return
+                    
+                    # Last agent to arrive, launch as normal
+                    self._waiting_assignments.remove(assignment.db_id)
+
+                    for queried_agent in agents:
+                        if queried_agent.get_status() != AgentState.STATUS_WAITING:
+                            logger.debug(f"Delaying launch of {assignment}, should retry.")
+                            return  # Need to wait for all agents to be waiting to launch
+
+                    # Mypy not-null cast
+                    non_null_agents = [a for a in agents if a is not None]
+                    # Launch the backend for this assignment
+                    registered_agents = [
+                        self.agents[a.get_agent_id()]
+                        for a in non_null_agents
+                        if a is not None
+                    ]
+
+                    live_run.task_runner.execute_assignment(assignment, registered_agents)
+                    return
+
+                self._waiting_assignments.add(assignment.db_id)
+                await asyncio.sleep(self._max_wait_time)
+                if assignment.db_id not in self._waiting_assignments:
+                    return
+
+                # Long enough for timeout, check if non-missing agents are waiting
+                self._waiting_assignments.remove(assignment.db_id)
+
+                units_to_expire = []
+                logger.info(agents)
+                # for i, queried_agent in enumerate(agents):
+                #     if queried_agent is not None:
+                #         if queried_agent.get_status() != AgentState.STATUS_WAITING:
+                #             logger.debug(f"Delaying launch of {assignment}, should retry.")
+                #             return
+                #     else:
+                #         units_to_expire.append(units[i])
+                
+                logger.info(f"Expiring {units_to_expire}")
+                for unit in units_to_expire:
+                    unit.set_status(AssignmentState.EXPIRED)
 
                 # Mypy not-null cast
                 non_null_agents = [a for a in agents if a is not None]
@@ -290,6 +358,7 @@ class WorkerPool:
                     if a is not None
                 ]
 
+                logger.info(f"Launching {assignment} after timeout.")
                 live_run.task_runner.execute_assignment(assignment, registered_agents)
 
     async def register_agent_from_onboarding(self, onboarding_agent: "OnboardingAgent"):

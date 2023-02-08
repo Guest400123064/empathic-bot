@@ -147,6 +147,10 @@ def validate_onboarding(data):
 
 
 def make_world(opt, agents):
+
+    if len(agents) < 2:
+        raise RuntimeError("You must pass in two agents for this task world.")
+
     return MultiAgentDialogWorld(opt, agents)
 
 
