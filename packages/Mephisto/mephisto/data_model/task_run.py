@@ -116,7 +116,15 @@ class TaskRunArgs:
             )
         },
     )
-
+    max_launch_timeout: int = field(
+        default=0,
+        metadata={
+            "help": (
+                "Time that mephisto will wait after assigning the first agent to a unit "
+                "before launching the task with incomplete agents."
+            )
+        },
+    )
     post_install_script: str = field(
         default="",
         metadata={

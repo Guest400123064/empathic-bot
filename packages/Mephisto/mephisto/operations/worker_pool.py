@@ -203,9 +203,9 @@ class WorkerPool:
         crowd_provider = live_run.provider
 
         # Experimental timeout feature
-        max_wait_time_seconds = live_run.task_run.args \
+        max_launch_timeout = live_run.task_run.args \
                                 .get("task", {}) \
-                                .get("max_wait_time_seconds", -1)
+                                .get("max_launch_timeout", -1)
 
         logger.debug(
             f"Worker {worker.db_id} is being assigned one of {len(units)} units."
@@ -315,7 +315,7 @@ class WorkerPool:
                         shortened agent list, and expires the corresponding units."""
 
                     self._waiting_assignments.add(assignment.db_id)
-                    await asyncio.sleep(max_wait_time_seconds)
+                    await asyncio.sleep(max_launch_timeout)
 
                     # Assignment already launched by the last joined agent while sleeping
                     if assignment.db_id not in self._waiting_assignments:
@@ -344,7 +344,7 @@ class WorkerPool:
                 # There are two situations lead to normal full launch:
                 #   1. Timeout is disabled
                 #   2. Timeout enabled but already waiting (not the first assigned agent)
-                if (max_wait_time_seconds <= 0) \
+                if (max_launch_timeout <= 0) \
                     or (assignment.db_id in self._waiting_assignments):
 
                     if None in agents:
