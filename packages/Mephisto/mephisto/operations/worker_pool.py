@@ -115,7 +115,6 @@ class WorkerPool:
         self._live_run: Optional["LiveTaskRun"] = None
 
         # Track the timeout status of assignments
-        self._max_wait_time = 4
         self._waiting_assignments = set()
 
     def register_run(self, live_run: "LiveTaskRun") -> None:
@@ -203,6 +202,11 @@ class WorkerPool:
         task_runner = live_run.task_runner
         crowd_provider = live_run.provider
 
+        # Experimental timeout feature
+        max_wait_time_seconds = live_run.task_run.args \
+                                .get("task", {}) \
+                                .get("max_wait_time_seconds", -1)
+
         logger.debug(
             f"Worker {worker.db_id} is being assigned one of {len(units)} units."
         )
@@ -280,15 +284,14 @@ class WorkerPool:
                 logger.debug(f"Attempting to launch {assignment}.")
                 agents = await loop.run_in_executor(None, assignment.get_agents)
 
-                # Timeout disabled
-                if self._max_wait_time <= 0:
-                    if None in agents:
-                        return  # need to wait for all agents to be here to launch
-
-                    for queried_agent in agents:
-                        if queried_agent.get_status() != AgentState.STATUS_WAITING:
-                            logger.debug(f"Delaying launch of {assignment}, should retry.")
-                            return  # Need to wait for all agents to be waiting to launch
+                def _launch_assignment_with_agents(agents):
+                    """This function encapsulates the logic for the normal launch operations, 
+                        i.e., launching with a list of non-null `agents`. One additional 
+                        operation is to remove the assignment from the `_waiting_assignments`
+                        in oder to avoid launching the assignment twice when timeout enabled.
+                        The function is called by both the normal launch and the timeout launch, 
+                        the difference lies in the length of the `agents` list. Timeout launch
+                        may result in a list shorter than the originally intended."""
 
                     # Mypy not-null cast
                     non_null_agents = [a for a in agents if a is not None]
@@ -299,67 +302,63 @@ class WorkerPool:
                         if a is not None
                     ]
 
-                    live_run.task_runner.execute_assignment(assignment, registered_agents)
-                    return
+                    if assignment.db_id in self._waiting_assignments:
+                        self._waiting_assignments.remove(assignment.db_id)
+                    return live_run.task_runner.execute_assignment(assignment, registered_agents)
 
-                # Timeout enabled
-                if assignment.db_id in self._waiting_assignments:
-                    if None in agents:
+                async def _launch_assignment_after_timeout():
+                    """This function handles the timeout logic for the concurrent assignment.
+                        It should be called by THE FIRST ASSIGNED AGENT ONLY. Instead of 
+                        checking whether `None` in the queried agent list, it asynchronously
+                        starts a timer to set a maximum wait time. If the assignment is not
+                        started after the wait time, it will launch the assignment with the
+                        shortened agent list, and expires the corresponding units."""
+
+                    self._waiting_assignments.add(assignment.db_id)
+                    await asyncio.sleep(max_wait_time_seconds)
+
+                    # Assignment already launched by the last joined agent while sleeping
+                    if assignment.db_id not in self._waiting_assignments:
                         return
                     
-                    # Last agent to arrive, launch as normal
-                    self._waiting_assignments.remove(assignment.db_id)
+                    # Re-query agent to see if there are still connected agents
+                    units  = await loop.run_in_executor(None, assignment.get_units)
+                    agents = []
+                    for queried_unit in units:
+                        queried_agent = queried_unit.get_assigned_agent()
+
+                        # Don't wait for non-waiting agents as max time has passed.
+                        #   Using short-circuit evaluation here.
+                        if (queried_agent is None) \
+                            or (queried_agent.get_status() != AgentState.STATUS_WAITING):
+                            queried_unit.set_db_status(AssignmentState.EXPIRED)
+                        else:
+                            agents.append(queried_agent)
+
+                    # No agent left
+                    if len(agents) == 0:
+                        return
+
+                    return _launch_assignment_with_agents(agents)
+
+                # There are two situations lead to normal full launch:
+                #   1. Timeout is disabled
+                #   2. Timeout enabled but already waiting (not the first assigned agent)
+                if (max_wait_time_seconds <= 0) \
+                    or (assignment.db_id in self._waiting_assignments):
+
+                    if None in agents:
+                        return
 
                     for queried_agent in agents:
                         if queried_agent.get_status() != AgentState.STATUS_WAITING:
                             logger.debug(f"Delaying launch of {assignment}, should retry.")
-                            return  # Need to wait for all agents to be waiting to launch
+                            return
 
-                    # Mypy not-null cast
-                    non_null_agents = [a for a in agents if a is not None]
-                    # Launch the backend for this assignment
-                    registered_agents = [
-                        self.agents[a.get_agent_id()]
-                        for a in non_null_agents
-                        if a is not None
-                    ]
+                    return _launch_assignment_with_agents(agents)
 
-                    live_run.task_runner.execute_assignment(assignment, registered_agents)
-                    return
-
-                self._waiting_assignments.add(assignment.db_id)
-                await asyncio.sleep(self._max_wait_time)
-                if assignment.db_id not in self._waiting_assignments:
-                    return
-
-                # Long enough for timeout, check if non-missing agents are waiting
-                self._waiting_assignments.remove(assignment.db_id)
-
-                units_to_expire = []
-                logger.info(agents)
-                # for i, queried_agent in enumerate(agents):
-                #     if queried_agent is not None:
-                #         if queried_agent.get_status() != AgentState.STATUS_WAITING:
-                #             logger.debug(f"Delaying launch of {assignment}, should retry.")
-                #             return
-                #     else:
-                #         units_to_expire.append(units[i])
-                
-                logger.info(f"Expiring {units_to_expire}")
-                for unit in units_to_expire:
-                    unit.set_status(AssignmentState.EXPIRED)
-
-                # Mypy not-null cast
-                non_null_agents = [a for a in agents if a is not None]
-                # Launch the backend for this assignment
-                registered_agents = [
-                    self.agents[a.get_agent_id()]
-                    for a in non_null_agents
-                    if a is not None
-                ]
-
-                logger.info(f"Launching {assignment} after timeout.")
-                live_run.task_runner.execute_assignment(assignment, registered_agents)
+                # Timeout enabled, operation for the FIRST assigned agent
+                await _launch_assignment_after_timeout()
 
     async def register_agent_from_onboarding(self, onboarding_agent: "OnboardingAgent"):
         """
