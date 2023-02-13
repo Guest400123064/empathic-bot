@@ -9,3 +9,5 @@ mkdir -p ./data/mephisto-data/data
 
 mephisto config core.main_data_directory ./data/mephisto-data/data
 mephisto check
+
+conda deactivate
