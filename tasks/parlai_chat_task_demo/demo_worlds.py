@@ -148,8 +148,12 @@ def validate_onboarding(data):
 
 def make_world(opt, agents):
 
-    if len(agents) < 2:
-        raise RuntimeError("You must pass in two agents for this task world.")
+    from parlai.agents._custom.remote import RemoteAgent
+
+    while len(agents) < 2:
+        bot = RemoteAgent({"host_bot": "34.123.81.87", 
+                           "port_bot": "35496"})
+        agents.append(bot)
 
     return MultiAgentDialogWorld(opt, agents)
 
