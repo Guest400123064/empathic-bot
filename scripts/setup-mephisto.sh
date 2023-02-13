@@ -5,7 +5,7 @@ conda deactivate
 conda activate parlai
 
 # Setup mephisto data folder
-mkdir -p ./data/mephisto-data
+mkdir -p ./data/mephisto-data/data
 
-mephisto config core.main_data_directory ./data/mephisto-data
+mephisto config core.main_data_directory ./data/mephisto-data/data
 mephisto check

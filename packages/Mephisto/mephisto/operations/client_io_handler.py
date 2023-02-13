@@ -28,7 +28,7 @@ from mephisto.abstractions.blueprint import AgentState
 from mephisto.data_model.agent import _AgentBase
 from mephisto.operations.datatypes import LiveTaskRun
 from mephisto.abstractions._subcomponents.channel import Channel, STATUS_CHECK_TIME
-from typing import Dict, Tuple, Optional, Any, TYPE_CHECKING
+from typing import Dict, Tuple, Optional, Any, Set, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from mephisto.abstractions.database import MephistoDB
@@ -96,6 +96,9 @@ class ClientIOHandler:
         self.request_id_to_packet: Dict[str, Packet] = {}  # For metrics purposes
 
         self.is_shutdown = False
+        self.last_submission_time = time.time()  # For patience tracking
+
+        self.seen_update_ids: Set[str] = set()
 
         # Deferred initializiation
         self._live_run: Optional["LiveTaskRun"] = None
@@ -368,6 +371,7 @@ class ClientIOHandler:
         )
         self.process_outgoing_queue(self.message_queue)
         self.log_metrics_for_packet(self.request_id_to_packet[request_id])
+        # TODO Sometimes this request ID is lost, and we don't quite know why
         del self.request_id_to_channel_id[request_id]
         del self.request_id_to_packet[request_id]
 
@@ -383,11 +387,16 @@ class ClientIOHandler:
             elif packet.type == PACKET_TYPE_SUBMIT_UNIT:
                 self._on_submit_unit(packet, channel_id)
                 self.log_metrics_for_packet(packet)
+                self.last_submission_time = time.time()
             elif packet.type == PACKET_TYPE_SUBMIT_METADATA:
                 self._on_submit_metadata(packet)
             elif packet.type == PACKET_TYPE_MEPHISTO_BOUND_LIVE_UPDATE:
+                update_id = packet.data.get("update_id")
+                if update_id is not None and update_id in self.seen_update_ids:
+                    return  # Processing duplicated packet
                 self._on_live_update(packet, channel_id)
                 self.log_metrics_for_packet(packet)
+                self.seen_update_ids.add(update_id)
             elif packet.type == PACKET_TYPE_REGISTER_AGENT:
                 self._register_agent(packet, channel_id)
             elif packet.type == PACKET_TYPE_RETURN_STATUSES:

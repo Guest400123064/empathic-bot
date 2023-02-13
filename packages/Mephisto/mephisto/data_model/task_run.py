@@ -82,6 +82,15 @@ class TaskRunArgs:
         default=30 * 60,
         metadata={"help": "Time that workers have to work on your task once accepted."},
     )
+    no_submission_patience: int = field(
+        default=60 * 60 * 12,
+        metadata={
+            "help": (
+                "How long to wait between task submissions before shutting the run down "
+                "for a presumed issue. Value in seconds, default 12 hours. "
+            )
+        },
+    )
     allowed_concurrent: int = field(
         default=0,
         metadata={
@@ -116,15 +125,7 @@ class TaskRunArgs:
             )
         },
     )
-    max_launch_timeout: int = field(
-        default=0,
-        metadata={
-            "help": (
-                "Time that mephisto will wait after assigning the first agent to a unit "
-                "before launching the task with incomplete agents."
-            )
-        },
-    )
+
     post_install_script: str = field(
         default="",
         metadata={
@@ -142,6 +143,16 @@ class TaskRunArgs:
                 "Determines if npm build should be ran every time the task is ran."
                 "By default there is an optimization that only builds the webapp when there is a change in its contents."
                 "It would make sense to set this to true when doing local package development as you want to force a rebuild after running the post_install_script."
+            )
+        },
+    )
+
+    max_launch_timeout: int = field(
+        default=0,
+        metadata={
+            "help": (
+                "Time that mephisto will wait after assigning the first agent to a unit "
+                "before launching the task with incomplete agents."
             )
         },
     )

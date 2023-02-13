@@ -18,7 +18,9 @@ This directory also contains subfolders for some of the projects which are house
 
 ## Generative Models & Architectures 
 
-- **Director** [[project]](https://parl.ai/projects/director/) _New architecture/method for training language models with positive and negative examples._
+- **CRINGE Loss** [[project]](https://parl.ai/projects/cringe/) _New loss for training language models with negative examples (with no architecture change)._
+
+- **Director** [[project]](https://parl.ai/projects/director/) _New architecture for training language models with positive and negative examples using LM+classifier heads._
 
 - **Maintaining Identity** [[project]](https://github.com/facebookresearch/ParlAI/tree/main/projects/light_whoami/) _State-of-the-art dialogue models cannot maintain identity -- we study measurements & methods for this open problem._
 
@@ -113,7 +115,7 @@ _Task & models for chitchat with a given persona._
 
 - **SeeKeR:** [[project]](http://parl.ai/projects/seeker) _Modular open source search-augmented language model._
 
-- **Reason first, then respond:** [[paper]](https://arxiv.org/abs/2111.05204) _A modular Generation method for Knowledge-infused Dialogue._
+- **Reason first, then respond:** [[project]](https://parl.ai/projects/k2r/) [[paper]](https://arxiv.org/abs/2111.05204) _A modular Generation method for Knowledge-infused Dialogue._
 
 - **Internet-Augmented Dialogue Generation** [[project]](http://parl.ai/projects/sea) [[paper]](https://arxiv.org/abs/2107.07566).
   _Utilizing a search-engine for open domain chitchat task & models._

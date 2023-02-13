@@ -29,6 +29,13 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 2
+      # Workaround to avoid Post Use step failures. See: https://github.com/actions/setup-node/issues/317
+      - run: mkdir -p /home/runner/work/Mephisto/Mephisto/.yarn/cache
+        continue-on-error: true
+      - uses: actions/setup-node@v3
+        with:
+          cache: "yarn"
+          node-version: 16
       - uses: dorny/paths-filter@v2
         id: filter
         with:
@@ -69,6 +76,8 @@ jobs:
 
       - name: 🐍 Installing python
         uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
 
       - name: 🪨 Setup Node
         uses: actions/setup-node@v3
@@ -94,13 +103,13 @@ jobs:
       - name: ⌛️ Running cypress tests
         uses: cypress-io/github-action@v3.1.0
         with:
+          build: npm i -D cypress@11
           install: false
           browser: chrome
           project: ./mephisto/abstractions/blueprints/static_html_task/source
           config-file: ./cypress.config.js
           start: python ./examples/simple_static_task/static_test_script.py
           wait-on: "http://localhost:3000/?worker_id=x&assignment_id=1"
-          command-prefix: yarn dlx
           headless: true
 
   # Learn more about this test here: https://github.com/facebookresearch/Mephisto/pull/795
@@ -114,6 +123,8 @@ jobs:
 
       - name: 🐍 Installing python
         uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
 
       - name: 🪨 Setup Node
         uses: actions/setup-node@v3
@@ -139,13 +150,13 @@ jobs:
       - name: ⌛️ Running cypress tests
         uses: cypress-io/github-action@v3.1.0
         with:
+          build: npm i -D cypress@11
           install: false
           browser: chrome
           project: ./examples/static_react_task/webapp
           config-file: ./cypress.config.js
           start: python examples/static_react_task/run_task.py mephisto.task.post_install_script=link_mephisto_task.sh
           wait-on: "http://localhost:3000/?worker_id=x&assignment_id=1"
-          command-prefix: yarn dlx
           headless: true
 
   # Learn more about the remote_procedure_tests here: https://github.com/facebookresearch/Mephisto/pull/800
@@ -159,6 +170,8 @@ jobs:
 
       - name: 🐍 Installing python
         uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
 
       - name: 🪨 Setup Node
         uses: actions/setup-node@v3
@@ -184,13 +197,13 @@ jobs:
       - name: ⌛️ Running cypress tests
         uses: cypress-io/github-action@v3.1.0
         with:
+          build: npm i -D cypress@11
           install: false
           browser: chrome
           project: ./examples/remote_procedure/template/webapp
           config-file: ./cypress.config.js
           start: python examples/remote_procedure/template/run_task.py mephisto.task.post_install_script=link_mephisto_task.sh
           wait-on: "http://localhost:3000/?worker_id=x&assignment_id=1"
-          command-prefix: yarn dlx
           headless: true
 
   remote_procedure_mnist:
@@ -203,6 +216,8 @@ jobs:
 
       - name: 🐍 Installing python
         uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
 
       - name: 🪨 Setup Node
         uses: actions/setup-node@v3
@@ -230,13 +245,13 @@ jobs:
       - name: ⌛️ Running cypress tests
         uses: cypress-io/github-action@v3.1.0
         with:
+          build: npm i -D cypress@11
           install: false
           browser: chrome
           project: ./examples/remote_procedure/mnist/webapp
           config-file: ./cypress.config.js
           start: python examples/remote_procedure/mnist/run_task.py mephisto.task.post_install_script=link_mephisto_task.sh
           wait-on: "http://localhost:3000/?worker_id=x&assignment_id=1"
-          command-prefix: yarn dlx
           headless: true
 
   remote_procedure_toxicity_detection:
@@ -249,6 +264,8 @@ jobs:
 
       - name: 🐍 Installing python
         uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
 
       - name: 🪨 Setup Node
         uses: actions/setup-node@v3
@@ -274,13 +291,13 @@ jobs:
       - name: ⌛️ Running cypress tests
         uses: cypress-io/github-action@v3.1.0
         with:
+          build: npm i -D cypress@11
           install: false
           browser: chrome
           project: ./examples/remote_procedure/toxicity_detection/webapp
           config-file: ./cypress.config.js
           start: python examples/remote_procedure/toxicity_detection/run_task.py mephisto.task.post_install_script=link_mephisto_task.sh
           wait-on: "http://localhost:3000/?worker_id=x&assignment_id=1"
-          command-prefix: yarn dlx
           headless: true
 
   # Learn more about this test here: https://github.com/facebookresearch/Mephisto/pull/833
@@ -293,6 +310,8 @@ jobs:
         uses: actions/checkout@v2
       - name: 🐍 Installing python
         uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
 
       - name: 🪨 Setup Node
         uses: actions/setup-node@v3
@@ -327,6 +346,7 @@ jobs:
       - name: ⌛️ Running pre-submission cypress tests
         uses: cypress-io/github-action@v3.1.0
         with:
+          build: npm i -D cypress@11
           install: false
           browser: chrome
           project: ./examples/static_react_task_with_tips/webapp
@@ -334,7 +354,6 @@ jobs:
           spec: ./examples/static_react_task_with_tips/webapp/cypress/e2e/pre_submission_tests/*
           start: python examples/static_react_task_with_tips/run_task.py mephisto.task.force_rebuild=true mephisto.task.post_install_script=link_packages.sh
           wait-on: "http://localhost:3000/?worker_id=x&assignment_id=1"
-          command-prefix: yarn dlx
           headless: true
 
       - name: 🔪 Killing the web server
@@ -401,12 +420,12 @@ jobs:
       - name: ⌛️ Running post-submission cypress tests
         uses: cypress-io/github-action@v3.1.0
         with:
+          build: npm i -D cypress@11
           install: false
           project: ./examples/static_react_task_with_tips/webapp
           config-file: cypress.config.js
           spec: ./examples/static_react_task_with_tips/webapp/cypress/e2e/post_submission_tests/*
           start: python examples/static_react_task_with_tips/run_task.py mephisto.task.post_install_script=link_packages.sh mephisto.task.force_rebuild=true
           wait-on: "http://localhost:3000/?worker_id=x&assignment_id=1"
-          command-prefix: yarn dlx
           browser: chrome
           headless: true
