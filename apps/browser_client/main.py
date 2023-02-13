@@ -71,6 +71,15 @@ class G:
         try:
             G.websocket.connect(addr)
             print(f"Connected to chatbot at < {addr} >.")
+
+            # This is a hack to skip the OverWorld and TaskWorld by 
+            #   sending dummy messages. OverWorld accept any message
+            #   and TaskWorld accept only "begin" as the identifier.
+            G.ws_send("")
+            _ = G.ws_recv()
+            G.ws_send("begin")
+            _ = G.ws_recv()
+
         except ConnectionRefusedError:
             print(f"Failed to connect to chatbot at < {addr} >. Maybe wrong host or port?")
             exit(1)
