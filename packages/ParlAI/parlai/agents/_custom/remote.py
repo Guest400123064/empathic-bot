@@ -96,7 +96,12 @@ class RemoteAgent(Agent):
         observation = self.observation
         if observation is None:
             return {"id": self.getID(),
-                    "text": "Nothing to reply to yet"}
+                    "text": "Nothing to reply to yet",
+                    "episode_done": False}
 
         ws_send(self.ws, observation["text"])
-        return ws_recv(self.ws)
+        response = ws_recv(self.ws)
+        response.update({"id": self.getID(), 
+                         "episode_done": False})
+        
+        return response 
