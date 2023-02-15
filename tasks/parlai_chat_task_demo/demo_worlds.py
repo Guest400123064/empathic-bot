@@ -41,7 +41,7 @@ class MultiAgentDialogWorld(CrowdTaskWorld):
         self.agents = agents
         self.acts = [None] * len(agents)
         self.episodeDone = False
-        self.max_turns = opt.get("max_turns", 1)
+        self.max_turns = opt.get("max_turns", 5)
         self.current_turns = 0
         self.send_task_data = opt.get("send_task_data", False)
         self.opt = opt
@@ -158,7 +158,7 @@ def make_world(opt, agents):
 
     bots = []
     while len(agents) + len(bots) < 2:
-        bot = RemoteAgent({"host_bot": "34.173.132.233", 
+        bot = RemoteAgent({"host_bot": "34.71.159.56", 
                            "port_bot": "35496"})
         # This is a hack to skip the OverWorld and TaskWorld by 
         #   sending dummy messages. OverWorld accept any message
