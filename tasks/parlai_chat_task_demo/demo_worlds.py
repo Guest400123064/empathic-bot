@@ -5,6 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.crowdsourcing.utils.worlds import CrowdOnboardWorld, CrowdTaskWorld  # type: ignore
 from parlai.core.worlds import validate  # type: ignore
+from parlai.agents._custom.remote import RemoteAgent
+
 from joblib import Parallel, delayed  # type: ignore
 
 
@@ -76,8 +78,9 @@ class MultiAgentDialogWorld(CrowdTaskWorld):
         if self.current_turns >= self.max_turns:
             self.episodeDone = True
             for agent in self.agents:
-                if hasattr(agent.mephisto_agent, "is_bot"):
-                    agent.observe("[DONE]")
+                if isinstance(agent, RemoteAgent):
+                    agent.observe({"text": "[DONE]"})
+                    _ = agent.act()
                     continue
                 agent.observe(
                     {
@@ -112,7 +115,7 @@ class MultiAgentDialogWorld(CrowdTaskWorld):
                 )
                 agent.act()  # Request a response
             for agent in self.agents:  # Ensure you get the response
-                if hasattr(agent.mephisto_agent, "is_bot"):
+                if isinstance(agent, RemoteAgent):
                     continue
                 form_result = agent.act(timeout=self.opt["turn_timeout"])
 
@@ -153,21 +156,21 @@ def validate_onboarding(data):
 
 def make_world(opt, agents):
 
-    from parlai.agents._custom.remote import RemoteAgent
-
-    while len(agents) < 2:
+    bots = []
+    while len(agents) + len(bots) < 2:
         bot = RemoteAgent({"host_bot": "34.173.132.233", 
                            "port_bot": "35496"})
         # This is a hack to skip the OverWorld and TaskWorld by 
         #   sending dummy messages. OverWorld accept any message
         #   and TaskWorld accept only "begin" as the identifier.
-        _ = bot.act("")
-        _ = bot.act("begin")
-        
-        bot.is_bot = True
-        agents.append(bot)
+        bot.observe({"text": "dummy"})
+        _ = bot.act()
+        bot.observe({"text": "begin"})
+        _ = bot.act()
 
-    return MultiAgentDialogWorld(opt, agents)
+        bots.append(bot)
+
+    return MultiAgentDialogWorld(opt, agents + bots)
 
 
 def get_world_params():
