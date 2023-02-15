@@ -39,7 +39,7 @@ class MultiAgentDialogWorld(CrowdTaskWorld):
         self.agents = agents
         self.acts = [None] * len(agents)
         self.episodeDone = False
-        self.max_turns = opt.get("max_turns", 5)
+        self.max_turns = opt.get("max_turns", 1)
         self.current_turns = 0
         self.send_task_data = opt.get("send_task_data", False)
         self.opt = opt
@@ -76,7 +76,7 @@ class MultiAgentDialogWorld(CrowdTaskWorld):
         if self.current_turns >= self.max_turns:
             self.episodeDone = True
             for agent in self.agents:
-                if agent.is_bot:
+                if hasattr(agent.mephisto_agent, "is_bot"):
                     agent.observe("[DONE]")
                     continue
                 agent.observe(
@@ -112,7 +112,7 @@ class MultiAgentDialogWorld(CrowdTaskWorld):
                 )
                 agent.act()  # Request a response
             for agent in self.agents:  # Ensure you get the response
-                if agent.is_bot:
+                if hasattr(agent.mephisto_agent, "is_bot"):
                     continue
                 form_result = agent.act(timeout=self.opt["turn_timeout"])
 
@@ -158,6 +158,12 @@ def make_world(opt, agents):
     while len(agents) < 2:
         bot = RemoteAgent({"host_bot": "34.173.132.233", 
                            "port_bot": "35496"})
+        # This is a hack to skip the OverWorld and TaskWorld by 
+        #   sending dummy messages. OverWorld accept any message
+        #   and TaskWorld accept only "begin" as the identifier.
+        _ = bot.act("")
+        _ = bot.act("begin")
+        
         bot.is_bot = True
         agents.append(bot)
 

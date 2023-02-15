@@ -29,14 +29,6 @@ def ws_start(host: str, port: int) -> websocket.WebSocket:
         ws.connect(addr)
         print(f"Connected to chatbot at < {addr} >.")
 
-        # This is a hack to skip the OverWorld and TaskWorld by 
-        #   sending dummy messages. OverWorld accept any message
-        #   and TaskWorld accept only "begin" as the identifier.
-        ws_send(ws, "")
-        _ = ws_recv(ws)
-        ws_send(ws, "begin")
-        _ = ws_recv(ws)
-
     except ConnectionRefusedError:
         print(f"Failed to connect to chatbot at < {addr} >. Maybe wrong host or port?")
         exit(1)
