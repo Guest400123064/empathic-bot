@@ -39,7 +39,7 @@ class MultiAgentDialogWorld(CrowdTaskWorld):
         self.agents = agents
         self.acts = [None] * len(agents)
         self.episodeDone = False
-        self.max_turns = opt.get("max_turns", 2)
+        self.max_turns = opt.get("max_turns", 10)
         self.current_turns = 0
         self.send_task_data = opt.get("send_task_data", False)
         self.opt = opt
@@ -151,7 +151,7 @@ def make_world(opt, agents):
     from parlai.agents._custom.remote import RemoteAgent
 
     while len(agents) < 2:
-        bot = RemoteAgent({"host_bot": "34.123.81.87", 
+        bot = RemoteAgent({"host_bot": "34.173.132.233", 
                            "port_bot": "35496"})
         agents.append(bot)
 
