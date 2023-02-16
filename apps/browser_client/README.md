@@ -46,7 +46,7 @@ Now, in your browser (where you usually type `google.com`), enter `http://localh
 __Stop Chatting:__ In the input block, type `[DONE]` and hit enter to stop the chat service __(DO NOT FORGET THE SQUARE BRACKETS)__, and the chat history should be saved locally under `PROGRAM_FOLDER/chat/`.
 
 ## __Chat History__
-Chat history is saved as `< your_id >-< date_time >.json` in a __list-of-dictionaries__ format. Each dictionary corresponds to a user/bot response. The `PROGRAM_FOLDER/chat/example-02_16_01_17.json` examples should be clear enough. Further, there is a `CSV` file with the same name that you should annotate you preferences towards two different responses from the bot, namely, `base_response` and `rendered_response`. See [annotation instructions](https://github.com/Guest400123064/empathic-bot/tree/main/tasks/renyi_in_lab_data_collection).
+Chat history is saved as `< your_id >-< date_time >.json` in a __list-of-dictionaries__ format. Each dictionary corresponds to a user/bot response. The `PROGRAM_FOLDER/chat/example-02_16_01_17.json` examples should be clear enough. Further, there is a `CSV` file with the same name that you should annotate you preferences towards two different responses from the bot, namely, `base_response` and `rendered_response`. See [annotation instructions](https://github.com/Guest400123064/empathic-bot/tree/main/tasks/renyi_in_lab_data_collection#step-two-upload-chat-history).
 
 ## __Potential Problems__
 __Local Browser Port Blocked:__ It is possible that the default port __for browser__ (8080) is blocked. You can try to use other port like 5000 or 8000, e.g.,
