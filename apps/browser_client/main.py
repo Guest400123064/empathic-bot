@@ -31,7 +31,7 @@ class G:
     httpd        = None
     
     @staticmethod
-    def ws_send(text: str):
+    def ws_send(text: str, keep_history: bool = True):
         """Serialize dictionary and send data to websocket server.
             Also, save the data to chat history."""
 
@@ -43,10 +43,12 @@ class G:
         if G.websocket.connected:
             data = {"role": "User", "text": text}
             G.websocket.send(json.dumps(data))
-            G.chat_history.append(data)
+            
+            if keep_history:
+                G.chat_history.append(data)
 
     @staticmethod
-    def ws_recv() -> dict:
+    def ws_recv(keep_history: bool = True) -> dict:
         """Receive data from websocket server and deserialize it. 
             Also, save the data to chat history."""
         
@@ -59,7 +61,8 @@ class G:
             data = json.loads(G.websocket.recv())
             data.update({"role": "Bot"})
 
-            G.chat_history.append(data)
+            if keep_history:
+                G.chat_history.append(data)
             return data
         
     @staticmethod
@@ -76,10 +79,10 @@ class G:
             # This is a hack to skip the OverWorld and TaskWorld by 
             #   sending dummy messages. OverWorld accept any message
             #   and TaskWorld accept only "begin" as the identifier.
-            G.ws_send("")
-            _ = G.ws_recv()
-            G.ws_send("begin")
-            _ = G.ws_recv()
+            G.ws_send("", keep_history=False)
+            _ = G.ws_recv(keep_history=False)
+            G.ws_send("begin", keep_history=False)
+            _ = G.ws_recv(keep_history=False)
 
         except ConnectionRefusedError:
             print(f"Failed to connect to chatbot at < {addr} >. Maybe wrong host or port?")
@@ -120,8 +123,8 @@ class G:
                 break
 
             data_usr, data_bot = G.chat_history[j:j + 2]
-            assert data_usr == "User", "User input should be sent first."
-            assert data_bot == "Bot", "Consecutive messages sent from the user."
+            assert data_usr["role"] == "User", "User input should be sent first."
+            assert data_bot["role"] == "Bot", "Consecutive messages sent from the user."
 
             row = [user_name, timestamp, 
                    data_usr["text"], 
