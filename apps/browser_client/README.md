@@ -8,7 +8,6 @@ PROGRAM_FOLDER
   |-- requirements.txt
   |-- example.png
   |-- chat
-        |-- .gitkeep
         |-- example-02_16_01_17.json
         |-- example-02_16_01_17.csv
 ```
