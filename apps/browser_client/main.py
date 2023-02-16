@@ -11,6 +11,7 @@ The main client script for chatting and chat-history collection. This script
   endpoint for the frontend.
 """
 
+import csv
 import json
 
 import websocket
@@ -100,12 +101,38 @@ class G:
         if not os.path.exists(chat_dir):
             os.makedirs(chat_dir)
 
-        file_name = f"{user_name}-{datetime.datetime.now():%m_%d_%H_%M}.json"
-        with open(chat_dir / file_name, "w") as f:
+        timestamp = str(datetime.datetime.now().isoformat())
+        file_name_base = f"{user_name}-{datetime.datetime.now():%m_%d_%H_%M}"
+        with open(chat_dir / f"{file_name_base}.json", "w") as f:
             data = {"id": user_name,
-                    "timestamp": str(datetime.datetime.now().isoformat()),
+                    "timestamp": timestamp,
                     "chat_hist": G.chat_history}
             json.dump(data, f, indent=4)
+
+        # Construct CSV file for annotating preferences 
+        #   for base_response or rendered_response
+        head = ["id", "timestamp", "user_input", "base_response", "rendered_response",
+                "preference", "empathy", "likable", "sincere", "honest", "similar"]
+        rows = []
+        for i in range(len(G.chat_history) // 2):
+            j = i * 2
+            if G.chat_history[j]["text"] == G.chat_end_tok:
+                break
+
+            data_usr, data_bot = G.chat_history[j:j + 2]
+            assert data_usr == "User", "User input should be sent first."
+            assert data_bot == "Bot", "Consecutive messages sent from the user."
+
+            row = [user_name, timestamp, 
+                   data_usr["text"], 
+                   data_bot["base_response"],
+                   data_bot["text"]]
+            rows.append(row + [""] * (len(head) - len(row)))
+
+        with open(chat_dir / f"{file_name_base}.csv", "w") as f:
+            writer = csv.writer(f, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            writer.writerow(head)
+            writer.writerows(rows)
 
     @staticmethod
     def stop_httpd():
