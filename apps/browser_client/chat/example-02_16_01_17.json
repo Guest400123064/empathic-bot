@@ -1,0 +1,32 @@
+{
+    "id": "example",
+    "timestamp": "2023-02-16T01:17:45.086711",
+    "chat_hist": [
+        {
+            "role": "User",
+            "text": "Hi, how are you?"
+        },
+        {
+            "id": "Gpt3RenderAgent",
+            "gpt3_prompt": "Here is an empathetic sentence: {I thought it was terribly depressing what these children had to go through.}\nHere is another empathetic sentence: {I feel so sad for everyone especially the old and sickly seems as they are in the worst position.}\nHere is another empathetic sentence: {You always want better for your kid and I think giving them up to someone else would be the best option even though it hurts. So sad. My heart just breaks for these woman.}\nHere is some text: {I'm good, thanks for asking. How about you?.} Here is a rewrite of the text, which is more empathetic: {",
+            "base_response": "I'm good, thanks for asking. How about you?",
+            "text": "I'm doing alright, thank you for caring enough to ask. How are you holding up?",
+            "role": "Bot"
+        },
+        {
+            "role": "User",
+            "text": "I am good. My name is Jamie, and I study at Penn, what about you?"
+        },
+        {
+            "id": "Gpt3RenderAgent",
+            "gpt3_prompt": "Here is an empathetic sentence: {I thought it was terribly depressing what these children had to go through.}\nHere is another empathetic sentence: {I feel so sad for everyone especially the old and sickly seems as they are in the worst position.}\nHere is another empathetic sentence: {You always want better for your kid and I think giving them up to someone else would be the best option even though it hurts. So sad. My heart just breaks for these woman.}\nHere is some text: {That's good to hear. I'm jamie too, I'm studying at penn as well..} Here is a rewrite of the text, which is more empathetic: {",
+            "base_response": "That's good to hear. I'm jamie too, I'm studying at penn as well.",
+            "text": "That's wonderful to hear, Jamie! I'm so glad that you're studying at Penn. It must be an exciting experience.",
+            "role": "Bot"
+        },
+        {
+            "role": "User",
+            "text": "[DONE]"
+        }
+    ]
+}

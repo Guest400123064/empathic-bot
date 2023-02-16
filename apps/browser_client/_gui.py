@@ -8,8 +8,9 @@ This file copies static HTML from parlai.interactive_web.py for a simple
   chatbot client frontend. However, the reset functionality is removed.
 """
 
-END_MESSAGE  = ("Chat history saved at < chat/< YOUR ID >-< DATETIME >.json >. "
-                "Please upload the chat history to the google drive at < https://drive.google.com/drive/folders/1UBtqF_PXoOwkOSvGZrjiBdy_6utJCSrm?usp=sharing >. "
+END_MESSAGE  = ("Chat history saved at < chat/< YOUR ID >-< DATETIME >.json >. Also, there is a CSV file " 
+                "at < chat/< YOUR ID >-< DATETIME >.csv > that you should annotate your preferences (see instructions in README.md). "
+                "Please upload the chat history (both JSON and CSV files) to the google drive at < https://drive.google.com/drive/folders/1UBtqF_PXoOwkOSvGZrjiBdy_6utJCSrm?usp=sharing >. "
                 "And please finish the survey at < https://nyu.qualtrics.com/jfe/form/SV_26jZ2beozdQrcHk >.")
 STYLE_SHEET  = "https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.css"
 FONT_AWESOME = "https://use.fontawesome.com/releases/v5.3.1/js/all.js"
@@ -29,7 +30,7 @@ WEB_HTML     = """
                           <p>
                             <strong>Instructions</strong>
                             <br>
-                            Hit 'Enter', and the model will respond interactively. You may experience latency in seeing your input and the model's response 
+                            Start by typing anything and then hit 'Enter'. The model will respond interactively. You may experience latency in seeing your input and the model's responses 
                               since your input is sent to the model for processing and appears together with the response after processing. You MUST type the 
                               token "[DONE]" (no double quotes, with square brackets) to end the conversation and SAVE THE CHAT HISTORY.
                           </p>
