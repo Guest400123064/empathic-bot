@@ -141,6 +141,9 @@ class G:
     def stop_httpd():
         """Simply set the keep_running flag to False"""
 
+        G.ws_send("exit", keep_history=False)
+        _ = G.ws_recv(keep_history=False)
+
         G.keep_running = False
 
     @staticmethod
