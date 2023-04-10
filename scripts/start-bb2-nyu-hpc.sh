@@ -21,3 +21,6 @@ cd projects
 # Start BlenderBot2 in background
 python ./apps/terminal_server/main.py \
     --config-path ./apps/terminal_server/config/config_echo.yml &
+
+# Start ngrok
+/scratch/js11531/labshare/ngrok tcp 35496
