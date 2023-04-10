@@ -1,15 +1,8 @@
 #!/bin/bash
 
 # Activate environment
-cd $SCRATCH
-singularity exec --nv --overlay overlay-50GB-10M.ext3:ro \
-    /scratch/work/public/singularity/cuda11.6.124-cudnn8.4.0.27-devel-ubuntu20.04.4.sif \
-    /bin/bash
-
 source /ext3/env.sh
 conda activate parlai
-
-cd projects
 
 # Start search engine for blenderbot2
 #   - assuming the <parlai> environment is installed
