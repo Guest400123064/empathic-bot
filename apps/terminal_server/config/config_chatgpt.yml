@@ -1,0 +1,33 @@
+task_name:    render-bot
+max_workers:  30
+world_module: src.worlds
+overworld:    RenderOverworld
+
+tasks:
+  default:
+    onboard_world:   RenderBotChatOnboardWorld
+    task_world  :    RenderBotChatTaskWorld
+    timeout:         1800
+    agents_required: 1
+
+opt:
+  debug: True
+  models:
+    RenderBot:
+      model: chatgpt
+      gpt3:
+        style: empathetic
+
+        # If true, the bot will echo the user's input
+        is_dry_run: True
+        
+        # These arguments will be fed to openai's completion API call,
+        # see https://beta.openai.com/docs/api-reference/completions/create
+        generation_config:
+          model: text-davinci-002
+          top_p: 1
+          max_tokens: 50
+          temperature: 0
+          stop: ["}"]
+      generator:
+        model: chatgpt
