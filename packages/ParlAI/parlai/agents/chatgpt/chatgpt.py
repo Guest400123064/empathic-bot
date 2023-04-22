@@ -165,7 +165,12 @@ class ChatgptAgent(Agent):
         self.id = 'chatGPT_agent'
         self.turns = []
         self.history = FakeHistory(self)
-        self.article_info = """This isn't Pompeii, this is Aleppo
+        
+        self.article_info = ''
+        with open(os.getenv('ARTICLE_FILENAME'), 'r') as f:
+            self.article_info = f.read()
+        article_1  = """
+        This isn't Pompeii, this is Aleppo
         As 200 airstrikes hammered Aleppo last weekend, activists and aid workers posted dozens of pictures and videos online. Each of them heartbreaking, each helping to convey the horror of the besieged Syrian city. On Friday afternoon, a photo emerged of Brahim Sawas and his 10-year old son, Mahmoud, who had fallen victim to the war. They were covered in blood and dust, the pressure of the rubble holding their final postures in place. "This isn't Pompeii, this is Aleppo," one social media user wrote. A family devastated The tragedy of this family doesn't end there. Another image shows Sawas' 8-month-old baby, Muhammad, buried under rubble in a separate room as Syrian Civil Defense workers try to recover the child's body from the dirt and dust. Um Mahmoud, Sawas' wife and the mother of the two dead boys, survived the airstrike along with her daughter. The mother and daughter were sleeping in the same room with the 8-month-old baby. Weekend of horror Sawas and the two boys were among more than 300 people killed last weekend in a new wave of violence. The deadly strike that hit the family home at 5 a.m. Friday in eastern Aleppo's rebel-held neighborhood of Qaterji was the first of a series of hundred. One activist from Aleppo described to CNN a level of bombing never seen before in a conflict that began more five years ago. In response to the surge in airstrikes, activists took to Twitter, using an Arabic hashtag that translates to #HolocaustAleppo and sharing pictures and videos from the city. Some had mistakenly described the photo of the father and son as that of a mother clutching her baby."""
         
         openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -204,7 +209,12 @@ class ChatgptAgent(Agent):
 
         obs = self.observation
         
-        instr = "You should act as an empathetic person who is discussinng a news article from few years ago with a stranger on Amazon Mechanical Turk as part of a crowd sourcing experiment. YOU SHOULD NOT ACT AS AN AI LANGUAGE MODEL. Also don't say \"as a human\" Your responses should be a sentence or two max three. You shouldn't apologize too much. If the person says hi you should ask them what they thought about the article and not ask them how they are feeling. You are instructed to talk about the article. You know the other person has skimmed the article. Here's the old news article below."
+        instr = """You should act as an empathetic person who is discussinng a news article from few years ago with a stranger on Amazon Mechanical Turk as part of a crowd sourcing experiment.
+YOU SHOULD NOT ACT AS AN AI LANGUAGE MODEL. Also don't say \"as a human\".
+Your responses should be a sentence or two max three. You shouldn't apologize too much. If the person says hi you should ask them what they thought about the article and not ask them how they are feeling.
+You are instructed to talk about the article. You know the other person has skimmed the article. You should let the other person end the conversation.
+
+Here's the old news article below."""
 
         p = create_prime_within_gpt3_token_limit(instr, self.article_info, self.turns)
 
