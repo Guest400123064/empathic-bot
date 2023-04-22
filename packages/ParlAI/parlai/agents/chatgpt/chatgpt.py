@@ -22,8 +22,8 @@ import argparse
 import os
 from nltk import tokenize
 import tiktoken
-
-
+import time
+import random
 
 
 start_sequence = "\nAI:"
@@ -169,9 +169,6 @@ class ChatgptAgent(Agent):
         self.article_info = ''
         with open(os.getenv('ARTICLE_FILENAME'), 'r') as f:
             self.article_info = f.read()
-        article_1  = """
-        This isn't Pompeii, this is Aleppo
-        As 200 airstrikes hammered Aleppo last weekend, activists and aid workers posted dozens of pictures and videos online. Each of them heartbreaking, each helping to convey the horror of the besieged Syrian city. On Friday afternoon, a photo emerged of Brahim Sawas and his 10-year old son, Mahmoud, who had fallen victim to the war. They were covered in blood and dust, the pressure of the rubble holding their final postures in place. "This isn't Pompeii, this is Aleppo," one social media user wrote. A family devastated The tragedy of this family doesn't end there. Another image shows Sawas' 8-month-old baby, Muhammad, buried under rubble in a separate room as Syrian Civil Defense workers try to recover the child's body from the dirt and dust. Um Mahmoud, Sawas' wife and the mother of the two dead boys, survived the airstrike along with her daughter. The mother and daughter were sleeping in the same room with the 8-month-old baby. Weekend of horror Sawas and the two boys were among more than 300 people killed last weekend in a new wave of violence. The deadly strike that hit the family home at 5 a.m. Friday in eastern Aleppo's rebel-held neighborhood of Qaterji was the first of a series of hundred. One activist from Aleppo described to CNN a level of bombing never seen before in a conflict that began more five years ago. In response to the surge in airstrikes, activists took to Twitter, using an Arabic hashtag that translates to #HolocaustAleppo and sharing pictures and videos from the city. Some had mistakenly described the photo of the father and son as that of a mother clutching her baby."""
         
         openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -218,10 +215,21 @@ Here's the old news article below."""
 
         p = create_prime_within_gpt3_token_limit(instr, self.article_info, self.turns)
 
-        resp = query_completion_api(p)
-        resp_txt = resp.choices[0]['message']['content']
+        try:
+            start_time = time.time()
+            resp = query_completion_api(p)
+            resp_txt = resp.choices[0]['message']['content']
+            end_time = time.time()
+            humanlike_delay = 5+len(resp_txt)*random.uniform(0.05, 0.2)
+            if end_time - start_time < humanlike_delay:
+                time.sleep(humanlike_delay - (end_time - start_time))
+        except:
+            resp_txt = 'hmm..."
 
         resp_txt = resp_txt.strip()
+        resp_txt = resp_txt.replace('As an AI language model, I do not have emotions, but ','')
+        resp_txt = resp_txt.replace('As an AI language model, ','')
+        
 
         self.turns += [('assistant', f"{resp_txt}")]
         
