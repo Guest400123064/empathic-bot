@@ -224,7 +224,7 @@ Here's the old news article below."""
             if end_time - start_time < humanlike_delay:
                 time.sleep(humanlike_delay - (end_time - start_time))
         except:
-            resp_txt = 'hmm..."
+            resp_txt = 'hmm...'
 
         resp_txt = resp_txt.strip()
         resp_txt = resp_txt.replace('As an AI language model, I do not have emotions, but ','')
