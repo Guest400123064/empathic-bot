@@ -220,7 +220,7 @@ Here's the old news article below."""
             resp = query_completion_api(p)
             resp_txt = resp.choices[0]['message']['content']
             end_time = time.time()
-            humanlike_delay = 5+len(resp_txt)*random.uniform(0.05, 0.2)
+            humanlike_delay = 2+len(resp_txt)*random.uniform(0.05, 0.1)
             if end_time - start_time < humanlike_delay:
                 time.sleep(humanlike_delay - (end_time - start_time))
         except:
