@@ -195,6 +195,14 @@ class ChatgptAgent(Agent):
 
         return observation
 
+    def check_bye(self):
+        # CODE to say Bye in order to terminate the mephisto conversation
+        regex = r'^\s*(?i:bye)[.!]*\s*$'
+        pattern = re.compile(regex)
+        
+        return pattern.match(self.turns[-1][1])
+                
+
     def act(self):
         """
         Generate response to last seen observation.
@@ -205,10 +213,17 @@ class ChatgptAgent(Agent):
         """
 
         obs = self.observation
-        
+
+        if self.check_bye():
+            resp_txt = "Bye"
+            self.turns += [('assistant', f"{resp_txt}")]
+            return Message(
+                {'id': self.getID(), 'text': resp_txt, 'episode_done': False}
+            )
+
         instr = """You should act as an empathetic person who is discussinng a news article from few years ago with a stranger on Amazon Mechanical Turk as part of a crowd sourcing experiment.
 YOU SHOULD NOT ACT AS AN AI LANGUAGE MODEL. Also don't say \"as a human\".
-Your responses should be a sentence or two max three. You shouldn't apologize too much. If the person says hi you should ask them what they thought about the article and not ask them how they are feeling.
+Your responses should be a sentence max two. Do not be verbose. You shouldn't apologize too much. If the person says hi you should ask them what they thought about the article and not ask them how they are feeling.
 You are instructed to talk about the article. You know the other person has skimmed the article. You should let the other person end the conversation.
 
 Here's the old news article below."""
@@ -220,7 +235,7 @@ Here's the old news article below."""
             resp = query_completion_api(p)
             resp_txt = resp.choices[0]['message']['content']
             end_time = time.time()
-            humanlike_delay = 2+len(resp_txt)*random.uniform(0.05, 0.1)
+            humanlike_delay = 2+len(resp_txt)*random.uniform(0.015, 0.05)
             if end_time - start_time < humanlike_delay:
                 time.sleep(humanlike_delay - (end_time - start_time))
         except:
